@@ -38,7 +38,7 @@ func escape(field []byte) (result []byte) {
 
 func main() {
 	if len(os.Args) < 3 {
-		fmt.Fprintf(os.Stderr, "Usage: $s {separator} {input filename 1} {input filename 2} ... \n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s {separator} {input filename 1} {input filename 2} ... \n", os.Args[0])
 		os.Exit(1)
 	}
 	

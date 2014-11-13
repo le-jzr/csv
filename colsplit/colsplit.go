@@ -82,7 +82,7 @@ func splitLine(line []byte, ln int, separator []byte) (result [][]byte) {
 
 func main() {
 	if len(os.Args) != 4 {
-		fmt.Fprintf(os.Stderr, "Usage: $s {separator} {filename} {column filename format}\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s {separator} {filename} {column filename format}\n", os.Args[0])
 		os.Exit(1)
 	}
 	
@@ -92,7 +92,8 @@ func main() {
 	
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(os.Stderr, "Cannot open file %s: %s\n", filename, err)
+		os.Exit(1)
 	}
 	
 	lines := bytes.Split(file, []byte{'\n'})
@@ -115,9 +116,11 @@ func main() {
 	}
 	
 	for i := 0; i < mostFields; i++ {
-		outfile, err := os.Create(fmt.Sprintf(out_format, i))
+		outfilename := fmt.Sprintf(out_format, i)
+		outfile, err := os.Create(outfilename)
 		if err != nil {
-			panic(err)
+			fmt.Fprintf(os.Stderr, "Cannot create file %s: %s\n", outfilename, err)
+			os.Exit(1)
 		}
 		
 		for _, l := range splitLines {
