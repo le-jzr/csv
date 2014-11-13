@@ -23,4 +23,4 @@ coljoin
 
 To install using Go:
 
-	github.com/zarevucky/csv/coljoin
+	go get github.com/zarevucky/csv/coljoin
