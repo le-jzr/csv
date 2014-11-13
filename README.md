@@ -12,6 +12,7 @@ colsplit
 [colsplit @ godoc](http://godoc.org/github.com/zarevucky/csv/colsplit)
 
 To install using Go:
+
 	go get github.com/zarevucky/csv/colsplit
 
 
@@ -21,4 +22,5 @@ coljoin
 [coljoin @ godoc](http://godoc.org/github.com/zarevucky/csv/coljoin)
 
 To install using Go:
+
 	github.com/zarevucky/csv/coljoin
