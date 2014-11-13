@@ -1,4 +1,13 @@
-
+// Usage: colsplit {separator} {filename} {column-filename-format}
+//
+// Splits columns of a CSV file into a separate file for each column.
+// Quoted fields, if any, are unquoted in the process.
+// Separator can be specified as any string.
+// Filename is the name of the input file.
+// Column-filename-format is a format string for fmt.Printf(), which specifies
+// the schema for name of the output files. This schema should contain substring '%d'
+// exactly once, and this is going to be replaced by the number of the column, starting with 0.
+// 
 package main
 
 import (
