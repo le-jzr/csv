@@ -17,16 +17,25 @@ import (
 	"io/ioutil"
 )
 
+func needsEscape(field []byte, separator []byte) bool {
+	if bytes.Index(field, separator) != -1 {
+		return true
+	}
+	
+	if bytes.Index(field, []byte{'"'}) != -1 {
+		return true
+	}
+	
+	return false
+}
+
 func escape(field []byte) (result []byte) {
 	result = []byte{'"'}
 	
 	for _, b := range field {
-		switch b {
-		case '"':
-			result = append(result, '\\', '"')
-		case '\\':
-			result = append(result, '\\', '\\')
-		default:
+		if b == '"' {
+			result = append(result, '"', '"')
+		} else {
 			result = append(result, b)
 		}
 	}
@@ -52,7 +61,8 @@ func main() {
 	for i, in_filename := range in_filenames {
 		file, err := ioutil.ReadFile(in_filename)
 		if err != nil {
-			panic(err)
+			fmt.Fprintf(os.Stderr, "Cannot open file %s: %s\n", in_filename, err)
+			os.Exit(1)
 		}
 		
 		lines := bytes.Split(file, []byte{'\n'})
@@ -81,7 +91,7 @@ func main() {
 				os.Stdout.Write(separator)
 			}
 			
-			if bytes.Index(field, separator) == -1 {
+			if needsEscape(field, separator) {
 				os.Stdout.Write(field)
 			} else {
 				os.Stdout.Write(escape(field))
