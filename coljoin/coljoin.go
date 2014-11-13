@@ -3,6 +3,7 @@
 // Creates a CSV files using input files as columns.
 // I.e. the first line of output will contain first lines of all input files, in the order they
 // were written on the command line, separated by specified separator (which can be any string).
+// 
 // The fields of the output CSV are quoted if they contain the separator or quotes.
 //
 // The output CSV is written to the standard output stream.

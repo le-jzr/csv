@@ -9,9 +9,9 @@ Currently contains:
 colsplit
 --------
 
-[http://godoc.org/github.com/zarevucky/csv/colsplit]
+[colsplit @ godoc](http://godoc.org/github.com/zarevucky/csv/colsplit)
 
 coljoin
 -------
 
-[http://godoc.org/github.com/zarevucky/csv/coljoin]
+[coljoin @ godoc](http://godoc.org/github.com/zarevucky/csv/coljoin)
