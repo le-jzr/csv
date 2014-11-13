@@ -21,7 +21,7 @@ import (
 	"fmt"
 )
 
-func consumeQuoted(line []byte) (field []byte, t []byte) {
+func consumeQuoted(line []byte, ln int) (field []byte, t []byte) {
 	inidx, outidx := 0, 0
 	
 	// line[0] == '"'
@@ -30,36 +30,35 @@ func consumeQuoted(line []byte) (field []byte, t []byte) {
 	for inidx < len(line) {
 		r, size := utf8.DecodeRune(line[inidx:])
 		
-		switch (r) {
-		case '"':
-			return line[:outidx], line[inidx+size:]
-		case '\\':
+		if r == '"' {
 			inidx += size
 			r, size = utf8.DecodeRune(line[inidx:])
-			fallthrough
-		default:
-			inidx += size
-			outidx += utf8.EncodeRune(line[outidx:], r)
+			
+			if r != '"' {
+				return line[:outidx], line[inidx:]
+			}
 		}
+		
+		inidx += size
+		outidx += utf8.EncodeRune(line[outidx:], r)
 	}
 	
-	panic("quoted end of line")
+	fmt.Fprintln(os.Stderr, "Quoted end of line on line %d.\n", ln)
+	
+	return line[:outidx], nil
 }
 
-func head(line []byte, separator []byte) (h []byte, t []byte) {
+func head(line []byte, ln int, separator []byte) (h []byte, t []byte) {
 	if line[0] == '"' {
-		field, line := consumeQuoted(line)
+		field, line := consumeQuoted(line, ln)
+		
 		if !bytes.HasPrefix(line, separator) && len(line) > 0 {
-			fmt.Print("|", string(field), "|\n")
-			fmt.Print("|", string(line), "|\n")
-			panic("bad file")
+			fmt.Fprintln(os.Stderr, "Malformed quotation on line %d.\n", ln)
+		} else {
+			line = line[len(separator):]
 		}
-		
-		if len(line) == 0 {
-			return field, nil
-		}
-		
-		return field, line[len(separator):]
+
+		return field, line
 	}
 	
 	idx := bytes.Index(line, separator)
@@ -70,10 +69,10 @@ func head(line []byte, separator []byte) (h []byte, t []byte) {
 	return line[:idx], line[idx+len(separator):]
 }
 
-func splitLine(line []byte, separator []byte) (result [][]byte) {
+func splitLine(line []byte, ln int, separator []byte) (result [][]byte) {
 	for len(line) > 0 {
 		var h []byte
-		h, line = head(line, separator)
+		h, line = head(line, ln, separator)
 		
 		result = append(result, h)
 	}
@@ -106,8 +105,8 @@ func main() {
 	var splitLines [][][]byte
 	var mostFields int
 	
-	for _, l := range lines {
-		fields := splitLine(l, separator)
+	for ln, l := range lines {
+		fields := splitLine(l, ln, separator)
 		splitLines = append(splitLines, fields)
 		
 		if len(fields) > mostFields {
