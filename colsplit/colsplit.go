@@ -52,10 +52,10 @@ func head(line []byte, ln int, separator []byte) (h []byte, t []byte) {
 	if line[0] == '"' {
 		field, line := consumeQuoted(line, ln)
 		
-		if !bytes.HasPrefix(line, separator) && len(line) > 0 {
-			fmt.Fprintln(os.Stderr, "Malformed quotation on line %d.\n", ln)
-		} else {
+		if bytes.HasPrefix(line, separator) {
 			line = line[len(separator):]
+		} else if len(line) > 0 {
+			fmt.Fprintln(os.Stderr, "Malformed quotation on line %d.\n", ln)
 		}
 
 		return field, line
