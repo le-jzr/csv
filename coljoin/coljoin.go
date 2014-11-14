@@ -92,9 +92,9 @@ func main() {
 			}
 			
 			if needsEscape(field, separator) {
-				os.Stdout.Write(field)
-			} else {
 				os.Stdout.Write(escape(field))
+			} else {
+				os.Stdout.Write(field)
 			}
 		}
 		
